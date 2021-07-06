@@ -64,6 +64,56 @@ class App extends React.Component {
     this.client = new MqttService(WS_URL, this.handleMessage)
   }
 
+  componentDidUpdate() {
+      localStorage.setItem("savedData", JSON.stringify(this.state))
+  }
+
+  componentDidMount() {
+      this.setState(JSON.parse(localStorage.getItem("savedData")) || {
+          selectedLine: 4,
+          4: {
+              frontSlider: "",
+              middleSlider: "",
+              rearSlider: "",
+              weight: 0,
+              trolley: 0,
+              addedWeight: 0,
+              confirmed: false,
+              visible: "block"
+          },
+          3: {
+              frontSlider: "",
+              middleSlider: "",
+              rearSlider: "",
+              weight: 0,
+              trolley: 0,
+              addedWeight: 0,
+              confirmed: false,
+              visible: "none"
+          },
+          2: {
+              frontSlider: "",
+              middleSlider: "",
+              rearSlider: "",
+              weight: 0,
+              trolley: 0,
+              addedWeight: 0,
+              confirmed: false,
+              visible: "none"
+          },
+          1: {
+              frontSlider: "",
+              middleSlider: "",
+              rearSlider: "",
+              weight: 0,
+              trolley: 0,
+              addedWeight: 0,
+              confirmed: false,
+              visible: "none"
+          },
+      } )
+  }
+
   handleMessage = (topic, payload) => {
     payload = JSON.parse(payload)
     if (topic === "setups") {
