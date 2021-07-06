@@ -15,18 +15,8 @@ export default class MqttService {
             Log.debug("MQTT Client connected successfully!")
             try {
                 this.client.subscribe([
-                    "+/frontSlider", 
-                    "+/middleSlider",
-                    "+/rearSlider",
-                    "+/addedWeight",
-                    "+/ping",
-                    "+/weightagain",
-                    "+/trolleyagain",
-                    "+/frontSlideragain",
-                    "+/middleSlideragain",
-                    "+/rearSlideragain",
-                    "+/addedWeightagain",
-                    "all/clear"
+                    "setups",
+                    "clear"
                 ])
             } catch (err) {
                 Log.error(err.stack)

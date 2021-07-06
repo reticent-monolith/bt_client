@@ -64,87 +64,31 @@ class App extends React.Component {
     this.client = new MqttService(WS_URL, this.handleMessage)
   }
 
-  handleMessage = (topicString, message) => {
-    const [line, topic] = topicString.split("/")
-    message = message.toString()
-
-      Log.debug("RECEIVING FROM BB RESEND")
-      console.log(line, typeof line)
-      console.log(topic, typeof topic)
-      console.log(message.toString(), typeof message.toString())
-      console.log("Message above will be parsed to an int")
-      console.log()
-
-    switch(topic) {
-        case "addedWeightagain":
-        case "addedWeight": {
+  handleMessage = (topic, payload) => {
+    payload = JSON.parse(payload)
+    if (topic === "setups") {
         this.setState({
-          ...this.state,
-          [line]: {
-            ...this.state[line],
-            frontSlider: "",
-            middleSlider: "",
-            rearSlider: "",
-            addedWeight: parseInt(message)
-          }
-        });break
-      }
-      case "frontSlideragain":
-      case "frontSlider": {
-        this.setState({
-          ...this.state,
-          [line]: {
-            ...this.state[line],
-            frontSlider: message,
-            addedWeight: 0
-          }
-        });break
-      }
-      case "middleSlideragain":
-      case "middleSlider": {
-        this.setState({
-          ...this.state,
-          [line]: {
-            ...this.state[line],
-            middleSlider: message,
-            addedWeight: 0
-          }
-        });break
-      }
-      case "rearSlideragain":
-      case "rearSlider": {
-        this.setState({
-          ...this.state,
-          [line]: {
-            ...this.state[line],
-            rearSlider: message,
-            addedWeight: 0
-          }
-        });break
-      }
-        case "weightagain":
-        case "weight": {
-            this.setState({
-                ...this.state,
-                [line]: {
-                    ...this.state[line],
-                    weight: parseInt(message)
-                }
-            }); break
-        }
-        case "trolleyagain":
-        case "trolley": {
-            this.setState({
-                ...this.state,
-                [line]: {
-                    ...this.state[line],
-                    trolley: parseInt(message)
-                }
-            }); break
-        }
-      case "clear": this.clearScreen();break;
-      default: Log.error(`Big Top doesn't understand "${topic}"`)
+            ...this.state,
+            4: {
+                ...this.state[4],
+                ...payload[4]
+            },
+            3: {
+                ...this.state[3],
+                ...payload[3]
+            },
+            2: {
+                ...this.state[2],
+                ...payload[2]
+            },
+            1: {
+                ...this.state[1],
+                ...payload[1]
+            }
+        })
     }
+
+    console.log(this.state)
   }
 
   changeWeight = (weight, line) => {
@@ -168,9 +112,11 @@ class App extends React.Component {
   }
 
   handleSend = () => {
-    this.client.send(this.state.selectedLine, "weight", this.state[this.state.selectedLine].weight)
-    this.client.send(this.state.selectedLine, "trolley", this.state[this.state.selectedLine].trolley)
-      Log.debug(`Just sent weight=${this.state[this.state.selectedLine].weight} which is a ${typeof this.state[this.state.selectedLine].weight} and trolley=${this.state[this.state.selectedLine].trolley} which is a ${this.state[this.state.selectedLine].trolley}`)
+    const payload = {
+        weight: this.state[this.state.selectedLine].weight,
+        trolley: this.state[this.state.selectedLine].trolley
+    }
+    this.client.send(this.state.selectedLine, "newRider", JSON.stringify(payload))
   }
 
   handleConfirmButton = (status, line) => {
