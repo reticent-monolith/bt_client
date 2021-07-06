@@ -1,5 +1,5 @@
 import './App.css';
-import React, { useEffect } from "react"
+import React from "react"
 import MqttService from "./mqtt/MqttService"
 import Log from "./utilities/Log"
 import Button from "react-bootstrap/Button"
@@ -36,7 +36,7 @@ class App extends React.Component {
   handleMessage = (topicString, message) => {
     const [line, topic] = topicString.split("/")
     message = message.toString()
-
+    
     Log.debug(topic)
 
     switch(topic) {
@@ -71,11 +71,8 @@ class App extends React.Component {
         });break
       }
       case "clear": this.clearScreen();break;
-      default: Log.error(`MqttService doesn't understand "${topic}"`)
+      default: Log.error(`Big Top doesn't understand "${topic}"`)
     }
-
-
-    console.log(this.state)
   }
 
   handleSend = () => {
@@ -89,8 +86,9 @@ class App extends React.Component {
   }
 
   clearScreen = () => {
+    const line = this.state.line
       this.setState({
-          line: 4,
+          line: line,
           frontSlider: "",
           middleSlider: "",
           rearSlider: "",
@@ -141,12 +139,23 @@ class App extends React.Component {
           checked={this.state.confirmed}
           type="checkbox"
           onChange={(e) => {
-              console.log("checked=" + e.currentTarget.checked)
-              console.log(e.currentTarget.value)
             this.handleConfirmButton(e.currentTarget.checked)
           }}
         >{this.state.confirmed ? "Confirmed!" : "Tap to Confirm" }</ToggleButton>
-
+        <select 
+          value={this.state.line}
+          onChange={e => {
+            this.setState({
+              ...this.state,
+              line: e.target.value
+            })
+          }}
+        >
+          <option value={1}>Line 1</option>
+          <option value={2}>Line 2</option>
+          <option value={3}>Line 3</option>
+          <option value={4}>Line 4</option>
+        </select>
       </div>
     );
   }
