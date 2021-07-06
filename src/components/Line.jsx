@@ -6,6 +6,16 @@ import Button from "react-bootstrap/Button"
 
 export default class Line extends React.Component {
 
+    constructor(props) {
+        super(props)
+
+        console.log(this.props)
+    }
+
+    componentDidUpdate() {
+        console.log(this.props)
+    }
+
     render() {
         return (
             <div className="Line" style={{visibility: this.props.display}}>
@@ -30,10 +40,10 @@ export default class Line extends React.Component {
                 >Send</Button>
 
                 <SetupDisplay 
-                front={this.props.frontSlider}
-                middle={this.props.middleSlider}
-                rear={this.props.rearSlider}
-                added={this.props.addedWeight}
+                front={this.props.front}
+                middle={this.props.middle}
+                rear={this.props.rear}
+                added={this.props.added}
                 />
 
                 <ToggleButton

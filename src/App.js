@@ -86,6 +86,7 @@ class App extends React.Component {
         this.setState({
           ...this.state,
           [line]: {
+            ...this.state[line],
             frontSlider: message,
             addedWeight: 0
           }
@@ -95,6 +96,7 @@ class App extends React.Component {
         this.setState({
           ...this.state,
           [line]: {
+            ...this.state[line],
             middleSlider: message,
             addedWeight: 0
           }
@@ -104,6 +106,7 @@ class App extends React.Component {
         this.setState({
           ...this.state,
           [line]: {
+            ...this.state[line],
             rearSlider: message,
             addedWeight: 0
           }
@@ -193,48 +196,26 @@ class App extends React.Component {
       })
   }
 
-  checkVisibility = line => {
-    Log.debug(`Checking visibility of line ${line}`)
-    if (this.state.selectedLine === line) {
-      return "visible"
-    } else {
-      return "hidden"
-    }
-  }
-
   visibility = {}
 
   render() {
-    const isVisible = {
-      1: this.checkVisibility(1),
-      2: this.checkVisibility(2),
-      3: this.checkVisibility(3),
-      4: this.checkVisibility(4),
-    }
-    Log.debug("rendering")
     return (
       <div className="App">
 
-        {[4,3,2,1].map(num => {
-          return (
-            <Line 
-              key={num}
-              number={num} 
-              display={isVisible[num]}
-              weight={this.state[num].weight}
-              trolley={this.state[num].trolley}
-              front={this.state[num].frontSlider}
-              middle={this.state[num].middleSlider}
-              rear={this.state[num].rearSlider}
-              added={this.state[num].addedWeight}
-              confirmed={this.state[num].confirmed}
-              changeWeight={this.changeWeight}
-              changeTrolley={this.changeTrolley}
-              send={this.handleSend}
-              confirm={this.handleConfirmButton}
-            />
-          )
-        })}
+        <Line 
+          number={parseInt(this.state.selectedLine)} 
+          weight={this.state[this.state.selectedLine].weight}
+          trolley={this.state[this.state.selectedLine].trolley}
+          front={this.state[this.state.selectedLine].frontSlider}
+          middle={this.state[this.state.selectedLine].middleSlider}
+          rear={this.state[this.state.selectedLine].rearSlider}
+          added={this.state[this.state.selectedLine].addedWeight}
+          confirmed={this.state[this.state.selectedLine].confirmed}
+          changeWeight={this.changeWeight}
+          changeTrolley={this.changeTrolley}
+          send={this.handleSend}
+          confirm={this.handleConfirmButton}
+        />
         
         <select 
           value={this.state.selectedLine}
@@ -243,6 +224,7 @@ class App extends React.Component {
               ...this.state,
               selectedLine: e.target.value
             })
+            this.forceUpdate()
           }}
         >
           <option value={1}>Line 1</option>

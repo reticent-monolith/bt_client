@@ -3,6 +3,7 @@ import BLACK from "../images/black.svg"
 import OLD_RED from "../images/oldRed.svg"
 import NEW_RED from "../images/newRed.svg"
 import YELLOW from "../images/yellow.svg"
+import empty from "../images/empty.svg"
 import weightBag from "../images/weightBag.svg"
 
 export default class SetupDisplay extends React.Component {
@@ -38,7 +39,7 @@ export default class SetupDisplay extends React.Component {
         "OLD_RED": OLD_RED,
         "NEW_RED": NEW_RED,
         "YELLOW": YELLOW,
-        "": ""
+        "": empty
     }
 
     render() {
