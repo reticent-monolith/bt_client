@@ -9,7 +9,7 @@ input[type=number] {
     -moz-appearance:textfield; /* Firefox */
 }
 
-.App {
+.Line {
     display: flex;
     flex-direction: column;
     height: 100%;

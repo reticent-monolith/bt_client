@@ -48,22 +48,22 @@ export default class SetupDisplay extends React.Component {
                 <div style={this.styles.container}>
                     <div style={this.styles.slider}>
                         <p>Front</p>
-                        <img src={this.sliders[this.props.front]} />
+                        <img src={this.sliders[this.props.front]} alt="derp"/>
                     </div>
                     <div style={this.styles.slider}>
                         <p>Middle</p>
-                        <img src={this.sliders[this.props.middle]} />
+                        <img src={this.sliders[this.props.middle]} alt="derp"/>
                     </div>
                     <div style={this.styles.slider}>
                         <p>Rear</p>
-                        <img src={this.sliders[this.props.rear]} />
+                        <img src={this.sliders[this.props.rear]} alt="derp" />
                     </div>
                 </div> 
             )
         } else {
             let bags = []
             for (let i = 0; i < Math.floor(this.props.added/10); i++) bags.push(
-                <img src={weightBag} style={this.styles.weightbag}/>
+                <img src={weightBag} style={this.styles.weightbag} alt="derp"/>
             )
             return (
                 <div style={this.styles.weightbagContainer}>

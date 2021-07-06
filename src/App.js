@@ -2,10 +2,8 @@ import './App.css';
 import React from "react"
 import MqttService from "./mqtt/MqttService"
 import Log from "./utilities/Log"
-import Button from "react-bootstrap/Button"
 import 'bootstrap/dist/css/bootstrap.min.css';
-import ToggleButton from "react-bootstrap/ToggleButton"
-import SetupDisplay from "./components/SetupDisplay"
+import Line from "./components/Line"
 
 const WS_URL = "ws://192.168.1.133:8883"
   
@@ -21,7 +19,8 @@ class App extends React.Component {
         weight: 0, 
         trolley: 0, 
         addedWeight: 0,
-        confirmed: false
+        confirmed: false,
+        visible: "block"
       },
       3: {
         frontSlider: "",
@@ -30,7 +29,8 @@ class App extends React.Component {
         weight: 0, 
         trolley: 0, 
         addedWeight: 0,
-        confirmed: false
+        confirmed: false,
+        visible: "none"
       },
       2: {
         frontSlider: "",
@@ -39,7 +39,8 @@ class App extends React.Component {
         weight: 0, 
         trolley: 0, 
         addedWeight: 0,
-        confirmed: false
+        confirmed: false,
+        visible: "none"
       },
       1: {
         frontSlider: "",
@@ -48,7 +49,8 @@ class App extends React.Component {
         weight: 0, 
         trolley: 0, 
         addedWeight: 0,
-        confirmed: false
+        confirmed: false,
+        visible: "none"
       },
     }
 
@@ -112,82 +114,128 @@ class App extends React.Component {
     }
   }
 
+  changeWeight = (weight, line) => {
+    this.setState({
+      ...this.state,
+      [line]: {
+        ...this.state[line],
+        weight: weight
+      }
+    })
+  }
+
+  changeTrolley = (trolley, line) => {
+    this.setState({
+      ...this.state,
+      [line]: {
+        ...this.state[line],
+        trolley: trolley
+      }
+    })
+  }
+
   handleSend = () => {
     this.client.send(this.state.selectedLine, "weight", this.state[this.state.selectedLine].weight)
     this.client.send(this.state.selectedLine, "trolley", this.state[this.state.selectedLine].trolley)
   }
 
-  handleConfirmButton = (status) => {
-      this.setState({confirmed: status})
-      this.client.send(this.state.line, "confirmation", `${status}`)
+  handleConfirmButton = (status, line) => {
+      this.setState({
+        ...this.state,
+        [line]: {
+          ...this.state[line],
+          confirmed: status
+        }
+      })
+      this.client.send(line, "confirmation", `${status}`)
   }
 
   clearScreen = () => {
-    const line = this.state.line
+    const line = this.state.selectedLine
       this.setState({
-          line: line,
-          frontSlider: "",
-          middleSlider: "",
-          rearSlider: "",
-          weight: 0,
-          trolley: 0,
-          addedWeight: 0,
-          confirmed: false
+          selectedLine: line,
+          4: {
+            frontSlider: "",
+            middleSlider: "",
+            rearSlider: "",
+            weight: 0, 
+            trolley: 0, 
+            addedWeight: 0,
+            confirmed: false
+          },
+          3: {
+            frontSlider: "",
+            middleSlider: "",
+            rearSlider: "",
+            weight: 0, 
+            trolley: 0, 
+            addedWeight: 0,
+            confirmed: false
+          },
+          2: {
+            frontSlider: "",
+            middleSlider: "",
+            rearSlider: "",
+            weight: 0, 
+            trolley: 0, 
+            addedWeight: 0,
+            confirmed: false
+          },
+          1: {
+            frontSlider: "",
+            middleSlider: "",
+            rearSlider: "",
+            weight: 0, 
+            trolley: 0, 
+            addedWeight: 0,
+            confirmed: false
+          }
       })
   }
 
+  checkVisibility = line => {
+    Log.debug(`Checking visibility of line ${line}`)
+    if (this.state.selectedLine === line) {
+      return "visible"
+    } else {
+      return "hidden"
+    }
+  }
+
+  visibility = {}
+
   render() {
+    const isVisible = {
+      1: this.checkVisibility(1),
+      2: this.checkVisibility(2),
+      3: this.checkVisibility(3),
+      4: this.checkVisibility(4),
+    }
+    Log.debug("rendering")
     return (
       <div className="App">
-        <input
-          value={this.state[this.state.selectedLine].weight !== 0 ? this.state[this.state.selectedLine].weight : ""}
-          className="input"
-          onChange={e => {
-            this.setState({
-              ...this.state,
-              [this.state.selectedLine]: {
-                ...this.state[this.state.selectedLine],
-                weight: e.target.value
-              }
-            })
-          }}
-        ></input>
-        <input
-          value={this.state[this.state.selectedLine].trolley !== 0 ? this.state[this.state.selectedLine].trolley : ""}
-          className="input"
-          onChange={e => {
-            this.setState({
-              ...this.state,
-              [this.state.selectedLine]: {
-                ...this.state[this.state.selectedLine],
-                trolley: e.target.value
-              }
-            })
-          }}
-        ></input>
-        <Button
-          variant="primary"
-          className="button"
-          onClick={this.handleSend}
-        >Send</Button>
 
-        <SetupDisplay 
-          front={this.state[this.state.selectedLine].frontSlider}
-          middle={this.state[this.state.selectedLine].middleSlider}
-          rear={this.state[this.state.selectedLine].rearSlider}
-          added={this.state[this.state.selectedLine].addedWeight}
-        />
-
-        <ToggleButton
-          className="button"
-          variant={this.state[this.state.selectedLine].confirmed ? "success" : "danger"}
-          checked={this.state[this.state.selectedLine].confirmed}
-          type="checkbox"
-          onChange={(e) => {
-            this.handleConfirmButton(e.currentTarget.checked)
-          }}
-        >{this.state[this.state.selectedLine].confirmed ? "Confirmed!" : "Tap to Confirm" }</ToggleButton>
-
+        {[4,3,2,1].map(num => {
+          return (
+            <Line 
+              key={num}
+              number={num} 
+              display={isVisible[num]}
+              weight={this.state[num].weight}
+              trolley={this.state[num].trolley}
+              front={this.state[num].frontSlider}
+              middle={this.state[num].middleSlider}
+              rear={this.state[num].rearSlider}
+              added={this.state[num].addedWeight}
+              confirmed={this.state[num].confirmed}
+              changeWeight={this.changeWeight}
+              changeTrolley={this.changeTrolley}
+              send={this.handleSend}
+              confirm={this.handleConfirmButton}
+            />
+          )
+        })}
+        
         <select 
           value={this.state.selectedLine}
           onChange={e => {
