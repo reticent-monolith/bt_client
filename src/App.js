@@ -68,13 +68,20 @@ class App extends React.Component {
     const [line, topic] = topicString.split("/")
     message = message.toString()
 
-    Log.debug(topic)
+      Log.debug("RECEIVING FROM BB RESEND")
+      console.log(line, typeof line)
+      console.log(topic, typeof topic)
+      console.log(message.toString(), typeof message.toString())
+      console.log("Message above will be parsed to an int")
+      console.log()
 
     switch(topic) {
-      case "addedWeight": {
+        case "addedWeightagain":
+        case "addedWeight": {
         this.setState({
           ...this.state,
           [line]: {
+            ...this.state[line],
             frontSlider: "",
             middleSlider: "",
             rearSlider: "",
@@ -82,6 +89,7 @@ class App extends React.Component {
           }
         });break
       }
+      case "frontSlideragain":
       case "frontSlider": {
         this.setState({
           ...this.state,
@@ -92,6 +100,7 @@ class App extends React.Component {
           }
         });break
       }
+      case "middleSlideragain":
       case "middleSlider": {
         this.setState({
           ...this.state,
@@ -102,6 +111,7 @@ class App extends React.Component {
           }
         });break
       }
+      case "rearSlideragain":
       case "rearSlider": {
         this.setState({
           ...this.state,
@@ -112,6 +122,26 @@ class App extends React.Component {
           }
         });break
       }
+        case "weightagain":
+        case "weight": {
+            this.setState({
+                ...this.state,
+                [line]: {
+                    ...this.state[line],
+                    weight: parseInt(message)
+                }
+            }); break
+        }
+        case "trolleyagain":
+        case "trolley": {
+            this.setState({
+                ...this.state,
+                [line]: {
+                    ...this.state[line],
+                    trolley: parseInt(message)
+                }
+            }); break
+        }
       case "clear": this.clearScreen();break;
       default: Log.error(`Big Top doesn't understand "${topic}"`)
     }
@@ -140,6 +170,7 @@ class App extends React.Component {
   handleSend = () => {
     this.client.send(this.state.selectedLine, "weight", this.state[this.state.selectedLine].weight)
     this.client.send(this.state.selectedLine, "trolley", this.state[this.state.selectedLine].trolley)
+      Log.debug(`Just sent weight=${this.state[this.state.selectedLine].weight} which is a ${typeof this.state[this.state.selectedLine].weight} and trolley=${this.state[this.state.selectedLine].trolley} which is a ${this.state[this.state.selectedLine].trolley}`)
   }
 
   handleConfirmButton = (status, line) => {
@@ -196,12 +227,9 @@ class App extends React.Component {
       })
   }
 
-  visibility = {}
-
   render() {
     return (
       <div className="App">
-
         <Line 
           number={parseInt(this.state.selectedLine)} 
           weight={this.state[this.state.selectedLine].weight}

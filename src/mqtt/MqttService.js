@@ -20,6 +20,12 @@ export default class MqttService {
                     "+/rearSlider",
                     "+/addedWeight",
                     "+/ping",
+                    "+/weightagain",
+                    "+/trolleyagain",
+                    "+/frontSlideragain",
+                    "+/middleSlideragain",
+                    "+/rearSlideragain",
+                    "+/addedWeightagain",
                     "all/clear"
                 ])
             } catch (err) {
