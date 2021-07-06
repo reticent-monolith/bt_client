@@ -1,9 +1,3 @@
-import logo from './logo.svg';
-import black from "./images/black.svg"
-import oldRed from "./images/oldRed.svg"
-import newRed from "./images/newRed.svg"
-import yellow from "./images/yellow.svg"
-import weightBag from "./images/weightBag.svg"
 import './App.css';
 import React, { useEffect } from "react"
 import MqttService from "./mqtt/MqttService"
