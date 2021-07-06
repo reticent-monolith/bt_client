@@ -9,8 +9,9 @@ import React, { useEffect } from "react"
 import MqttService from "./mqtt/MqttService"
 import Log from "./utilities/Log"
 import Button from "react-bootstrap/Button"
-import ToggleButton from "react-bootstrap/ToggleButton"
 import 'bootstrap/dist/css/bootstrap.min.css';
+import ToggleButton from "react-bootstrap/ToggleButton"
+import SetupDisplay from "./components/SetupDisplay"
 
 const WS_URL = "ws://192.168.1.133:8883"
   
@@ -39,25 +40,48 @@ class App extends React.Component {
   }
 
   handleMessage = (topicString, message) => {
-    Log.debug(message.toString())
     const [line, topic] = topicString.split("/")
     message = message.toString()
 
-    if (topic === "clear") this.clearScreen()
+    Log.debug(topic)
 
-    if (topic !== "addedWeight") {
-      this.setState({addedWeight: 0})
-    } else {
-      this.setState({
-        frontSlider: "",
-        middleSlider: "",
-        rearSlider: ""
-      })
+    switch(topic) {
+      case "addedWeight": {
+        this.setState({
+          ...this.state,
+          frontSlider: "",
+          middleSlider: "",
+          rearSlider: "",
+          addedWeight: parseInt(message)
+        });break
+      }
+      case "frontSlider": {
+        this.setState({
+          ...this.state,
+          frontSlider: message,
+          addedWeight: 0
+        });break
+      }
+      case "middleSlider": {
+        this.setState({
+          ...this.state,
+          middleSlider: message,
+          addedWeight: 0
+        });break
+      }
+      case "rearSlider": {
+        this.setState({
+          ...this.state,
+          rearSlider: message,
+          addedWeight: 0
+        });break
+      }
+      case "clear": this.clearScreen();break;
+      default: Log.error(`MqttService doesn't understand "${topic}"`)
     }
-    this.setState({
-      ...this.state,
-      [topic]: message
-    })
+
+
+    console.log(this.state)
   }
 
   handleSend = () => {
@@ -82,72 +106,6 @@ class App extends React.Component {
           confirmed: false
       })
   }
-
-  checkFront() {
-    let output = null
-    switch(this.state.frontSlider) {
-      case "BLACK": {
-        output = <img src={black} style={this.styles.slider}/>
-        break
-      }
-      case "OLD_RED": {
-        output = <img src={oldRed} style={this.styles.slider}/>
-        break
-      }
-      case "NEW_RED": {
-        output = <img src={newRed} style={this.styles.slider}/>
-        break
-      }
-      default: {
-        break
-      }
-    }
-    return output
-  }
-
-  checkMid() {
-    let output = ""
-    switch(this.state.middleSlider) {
-      case "OLD_RED": {
-        output = <img src={oldRed} style={this.styles.slider}/>
-        break
-      }
-      case "NEW_RED": {
-        output = <img src={newRed} style={this.styles.slider}/>
-        break
-      }
-      default: {
-        break
-      }
-    }
-    return output
-  }
-
-  checkRear() {
-    let output = ""
-    switch(this.state.rearSlider) {
-      case "YELLOW": {
-        output = <img src={yellow} style={this.styles.slider}/>
-        break
-      }
-      default: {
-        break
-      }
-    }
-    return output
-  }
-
-  checkAdded() {
-    let output = []
-    
-    for (let i of [...Array(Math.floor(this.state.addedWeight/10)).keys()]) {
-      output.push(<img src={weightBag} />)
-    }
-
-    return output
-  }
-  
-  
 
   render() {
     return (
@@ -176,11 +134,12 @@ class App extends React.Component {
           onClick={this.handleSend}
         >Send</Button>
 
-        <div className="setup-div">
-          <div className="setup-part">{this.checkFront()}</div>
-          <div className="setup-part">{this.state.addedWeight === 0 ? this.checkMid(): this.checkAdded()}</div>
-          <div className="setup-part">{this.checkRear()}</div>
-        </div>
+        <SetupDisplay 
+          front={this.state.frontSlider}
+          middle={this.state.middleSlider}
+          rear={this.state.rearSlider}
+          added={this.state.addedWeight}
+        />
 
         <ToggleButton
           className="button"

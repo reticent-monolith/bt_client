@@ -21,7 +21,7 @@ input[type=number] {
     text-align: center;
     width: 70%;
     margin: 20px;
-    border: none;
+    border: solid black 1px;
     border-radius: 5px;
 }
 
@@ -36,6 +36,6 @@ input[type=number] {
 }
 
 .setup-part {
-    min-width: calc(100%/3);
-    max-width: calc(100%/3);
+    min-width: calc(100%/4);
+    max-width: calc(100%/4);
 }
