@@ -115,8 +115,8 @@ class App extends React.Component {
   }
 
   handleMessage = (topic, payload) => {
-    payload = JSON.parse(payload)
     if (topic === "setups") {
+        payload = JSON.parse(payload)
         this.setState({
             ...this.state,
             4: {
@@ -136,6 +136,9 @@ class App extends React.Component {
                 ...payload[1]
             }
         })
+    }
+    if (topic === "clear") {
+        this.clearScreen()
     }
 
   }
