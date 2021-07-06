@@ -13,14 +13,43 @@ class App extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      line: 4,
-      frontSlider: "",
-      middleSlider: "",
-      rearSlider: "",
-      weight: 0, 
-      trolley: 0, 
-      addedWeight: 0,
-      confirmed: false
+      selectedLine: 4,
+      4: {
+        frontSlider: "",
+        middleSlider: "",
+        rearSlider: "",
+        weight: 0, 
+        trolley: 0, 
+        addedWeight: 0,
+        confirmed: false
+      },
+      3: {
+        frontSlider: "",
+        middleSlider: "",
+        rearSlider: "",
+        weight: 0, 
+        trolley: 0, 
+        addedWeight: 0,
+        confirmed: false
+      },
+      2: {
+        frontSlider: "",
+        middleSlider: "",
+        rearSlider: "",
+        weight: 0, 
+        trolley: 0, 
+        addedWeight: 0,
+        confirmed: false
+      },
+      1: {
+        frontSlider: "",
+        middleSlider: "",
+        rearSlider: "",
+        weight: 0, 
+        trolley: 0, 
+        addedWeight: 0,
+        confirmed: false
+      },
     }
 
     this.styles = {
@@ -36,38 +65,46 @@ class App extends React.Component {
   handleMessage = (topicString, message) => {
     const [line, topic] = topicString.split("/")
     message = message.toString()
-    
+
     Log.debug(topic)
 
     switch(topic) {
       case "addedWeight": {
         this.setState({
           ...this.state,
-          frontSlider: "",
-          middleSlider: "",
-          rearSlider: "",
-          addedWeight: parseInt(message)
+          [line]: {
+            frontSlider: "",
+            middleSlider: "",
+            rearSlider: "",
+            addedWeight: parseInt(message)
+          }
         });break
       }
       case "frontSlider": {
         this.setState({
           ...this.state,
-          frontSlider: message,
-          addedWeight: 0
+          [line]: {
+            frontSlider: message,
+            addedWeight: 0
+          }
         });break
       }
       case "middleSlider": {
         this.setState({
           ...this.state,
-          middleSlider: message,
-          addedWeight: 0
+          [line]: {
+            middleSlider: message,
+            addedWeight: 0
+          }
         });break
       }
       case "rearSlider": {
         this.setState({
           ...this.state,
-          rearSlider: message,
-          addedWeight: 0
+          [line]: {
+            rearSlider: message,
+            addedWeight: 0
+          }
         });break
       }
       case "clear": this.clearScreen();break;
@@ -76,8 +113,8 @@ class App extends React.Component {
   }
 
   handleSend = () => {
-    this.client.send(this.state.line, "weight", this.state.weight)
-    this.client.send(this.state.line, "trolley", this.state.trolley)
+    this.client.send(this.state.selectedLine, "weight", this.state[this.state.selectedLine].weight)
+    this.client.send(this.state.selectedLine, "trolley", this.state[this.state.selectedLine].trolley)
   }
 
   handleConfirmButton = (status) => {
@@ -103,20 +140,28 @@ class App extends React.Component {
     return (
       <div className="App">
         <input
-          value={this.state.weight !== 0 ? this.state.weight : ""}
+          value={this.state[this.state.selectedLine].weight !== 0 ? this.state[this.state.selectedLine].weight : ""}
           className="input"
           onChange={e => {
             this.setState({
-              weight: e.target.value
+              ...this.state,
+              [this.state.selectedLine]: {
+                ...this.state[this.state.selectedLine],
+                weight: e.target.value
+              }
             })
           }}
         ></input>
         <input
-          value={this.state.trolley !== 0 ? this.state.trolley : ""}
+          value={this.state[this.state.selectedLine].trolley !== 0 ? this.state[this.state.selectedLine].trolley : ""}
           className="input"
           onChange={e => {
             this.setState({
-              trolley: e.target.value
+              ...this.state,
+              [this.state.selectedLine]: {
+                ...this.state[this.state.selectedLine],
+                trolley: e.target.value
+              }
             })
           }}
         ></input>
@@ -127,27 +172,28 @@ class App extends React.Component {
         >Send</Button>
 
         <SetupDisplay 
-          front={this.state.frontSlider}
-          middle={this.state.middleSlider}
-          rear={this.state.rearSlider}
-          added={this.state.addedWeight}
+          front={this.state[this.state.selectedLine].frontSlider}
+          middle={this.state[this.state.selectedLine].middleSlider}
+          rear={this.state[this.state.selectedLine].rearSlider}
+          added={this.state[this.state.selectedLine].addedWeight}
         />
 
         <ToggleButton
           className="button"
-          variant={this.state.confirmed ? "success" : "danger"}
-          checked={this.state.confirmed}
+          variant={this.state[this.state.selectedLine].confirmed ? "success" : "danger"}
+          checked={this.state[this.state.selectedLine].confirmed}
           type="checkbox"
           onChange={(e) => {
             this.handleConfirmButton(e.currentTarget.checked)
           }}
-        >{this.state.confirmed ? "Confirmed!" : "Tap to Confirm" }</ToggleButton>
+        >{this.state[this.state.selectedLine].confirmed ? "Confirmed!" : "Tap to Confirm" }</ToggleButton>
+
         <select 
-          value={this.state.line}
+          value={this.state.selectedLine}
           onChange={e => {
             this.setState({
               ...this.state,
-              line: e.target.value
+              selectedLine: e.target.value
             })
           }}
         >
