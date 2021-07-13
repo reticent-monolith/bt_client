@@ -16,7 +16,8 @@ export default class MqttService {
             try {
                 this.client.subscribe([
                     "setups",
-                    "clear"
+                    "clear",
+                    "pollResponse"
                 ])
             } catch (err) {
                 Log.error(err.stack)

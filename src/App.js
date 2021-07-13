@@ -5,7 +5,7 @@ import Log from "./utilities/Log"
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Line from "./components/Line"
 
-const WS_URL = "ws://192.168.1.133:8883"
+const WS_URL = "ws://broker.reticent-monolith.com"
   
 class App extends React.Component {
   constructor(props) {
@@ -64,58 +64,20 @@ class App extends React.Component {
     this.client = new MqttService(WS_URL, this.handleMessage)
   }
 
-  componentDidUpdate() {
-      localStorage.setItem("savedData", JSON.stringify(this.state))
+  componentDidMount() {
+     this.client.send(this.props.number, "poll", "")
+     this.setState({
+       ...this.state,
+       selectedLine: parseInt(sessionStorage.getItem("selectedLine")) || 1
+     })
   }
 
-  componentDidMount() {
-      this.setState(JSON.parse(localStorage.getItem("savedData")) || {
-          selectedLine: 4,
-          4: {
-              frontSlider: "",
-              middleSlider: "",
-              rearSlider: "",
-              weight: 0,
-              trolley: 0,
-              addedWeight: 0,
-              confirmed: false,
-              visible: "block"
-          },
-          3: {
-              frontSlider: "",
-              middleSlider: "",
-              rearSlider: "",
-              weight: 0,
-              trolley: 0,
-              addedWeight: 0,
-              confirmed: false,
-              visible: "none"
-          },
-          2: {
-              frontSlider: "",
-              middleSlider: "",
-              rearSlider: "",
-              weight: 0,
-              trolley: 0,
-              addedWeight: 0,
-              confirmed: false,
-              visible: "none"
-          },
-          1: {
-              frontSlider: "",
-              middleSlider: "",
-              rearSlider: "",
-              weight: 0,
-              trolley: 0,
-              addedWeight: 0,
-              confirmed: false,
-              visible: "none"
-          },
-      } )
+  componentDidUpdate() {
+    sessionStorage.setItem("selectedLine", this.state.selectedLine)
   }
 
   handleMessage = (topic, payload) => {
-    if (topic === "setups") {
+    if (topic === "setups" || topic === "pollResponse") {
         payload = JSON.parse(payload)
         this.setState({
             ...this.state,
@@ -140,7 +102,6 @@ class App extends React.Component {
     if (topic === "clear") {
         this.clearScreen()
     }
-
   }
 
   changeWeight = (weight, line) => {

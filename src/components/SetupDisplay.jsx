@@ -12,7 +12,8 @@ export default class SetupDisplay extends React.Component {
         container: {
             display: "flex",
             justifyContent: "space-around",
-            height: "180px"
+            height: "180px",
+            width: "100%"
         },
         slider: {
             display: "flex",
