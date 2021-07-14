@@ -5,7 +5,7 @@ import Log from "./utilities/Log"
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Line from "./components/Line"
 
-const WS_URL = "ws://broker.reticent-monolith.com"
+const WS_URL = "wss://broker.reticent-monolith.com"
   
 class App extends React.Component {
   constructor(props) {
