@@ -6,6 +6,8 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import Line from "./components/Line"
 
 const WS_URL = "wss://broker.reticent-monolith.com"
+if (process.env.NODE_ENV === "development") WS_URL = "ws://localhost:9001"
+
   
 class App extends React.Component {
   constructor(props) {
